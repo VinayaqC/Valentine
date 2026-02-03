@@ -3,71 +3,192 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>For You 💖</title>
+  <title>Hey You 💖</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #ffe6ea, #fff);
+      background: linear-gradient(135deg, #ffe6ea, #ffffff);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
       text-align: center;
+      transition: background 0.6s ease;
     }
+
+    body.yes-mode {
+      background: linear-gradient(135deg, #ffccd5, #fff0f3);
+    }
+
     .card {
       background: white;
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      max-width: 320px;
+      padding: 26px;
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+      max-width: 340px;
       width: 90%;
+      animation: fadeIn 0.8s ease;
     }
+
     h1 {
       color: #e63946;
+      margin-bottom: 10px;
     }
+
+    p {
+      font-size: 15px;
+      color: #333;
+    }
+
     button {
-      padding: 12px 20px;
+      padding: 12px 22px;
       margin: 10px;
       border: none;
-      border-radius: 24px;
+      border-radius: 30px;
       font-size: 16px;
       cursor: pointer;
+      transition: transform 0.2s ease;
     }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
     .yes {
       background-color: #e63946;
       color: white;
     }
+
     .no {
       background-color: #f1f1f1;
+      color: #333;
     }
+
     .message {
-      margin-top: 20px;
+      margin-top: 18px;
       font-size: 16px;
+      min-height: 60px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .disclaimer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #777;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
     }
   </style>
 </head>
+
 <body>
+  <canvas id="confetti"></canvas>
+
   <div class="card">
     <p>Hey 😊</p>
     <p>I like taking things slowly, but there’s one thing I know for sure.</p>
+
     <h1>Will you be my Valentine?</h1>
 
     <button class="yes" onclick="yesClicked()">Yes 💖</button>
     <button class="no" onclick="noClicked()">No 🙈</button>
 
     <div class="message" id="response"></div>
+
+    <div class="disclaimer">
+      P.S. This is meant to be playful, not pressure 🙂
+    </div>
   </div>
 
   <script>
+    let noCount = 0;
+
     function yesClicked() {
+      document.body.classList.add("yes-mode");
+
       document.getElementById("response").innerHTML =
-        "That made me smile a lot 💖<br/>I’m really glad it’s you.";
+        "That made me smile more than I expected 💖<br/>I’m really glad it’s you.";
+
+      launchConfetti();
     }
 
     function noClicked() {
-      document.getElementById("response").innerHTML =
-        "That’s completely okay 🙂<br/>I still really enjoy talking to you.";
+      noCount++;
+
+      const response = document.getElementById("response");
+
+      if (noCount === 1) {
+        response.innerHTML =
+          "Are you <b>sure</b> sure? 😅<br/>I just wanted to double-check.";
+      }
+      else if (noCount === 2) {
+        response.innerHTML =
+          "Okay wow, you’re strong 🙈<br/>But I had to try one last time.";
+      }
+      else {
+        response.innerHTML =
+          "Alright. Fair enough 🙂<br/>Thanks for being honest.<br/>I still really enjoy talking to you.";
+      }
+    }
+
+    /* Confetti effect (lightweight, no libraries) */
+    function launchConfetti() {
+      const canvas = document.getElementById("confetti");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const pieces = [];
+      for (let i = 0; i < 120; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 10 + 5,
+          color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+          tilt: Math.random() * 10 - 10
+        });
+      }
+
+      let frame = 0;
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          ctx.beginPath();
+          ctx.fillStyle = p.color;
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        update();
+      }
+
+      function update() {
+        frame++;
+        pieces.forEach(p => {
+          p.y += Math.cos(frame / 10) + p.d / 2;
+          p.x += Math.sin(frame / 15);
+        });
+
+        if (frame < 120) {
+          requestAnimationFrame(draw);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      draw();
     }
   </script>
 </body>
