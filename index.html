@@ -22,6 +22,34 @@
       background: linear-gradient(135deg, #ffccd5, #fff0f3);
     }
 
+    body.no-mode {
+    background: linear-gradient(135deg, #2f3e46, #354f52);
+    }
+    
+    body.no-mode .card {
+      background: #f8f9fa;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      filter: grayscale(20%);
+    }
+    
+    body.no-mode h1 {
+      color: #495057;
+    }
+    
+    body.no-mode p,
+    body.no-mode .message {
+      color: #343a40;
+    }
+    body.no-mode {
+    animation: fadeDown 1s ease forwards;
+    }
+    
+    @keyframes fadeDown {
+      from { opacity: 1; }
+      to { opacity: 0.95; }
+    }
+
+
     .card {
       background: white;
       padding: 26px;
@@ -137,10 +165,14 @@
         response.innerHTML =
           "Okay wow, you’re resilient 🙈<br/>But I had to try one last time.";
       }
-      else {
-        response.innerHTML =
-          "Alright. Fair enough 🙂<br/>Thanks for being honest.<br/>I still really enjoy talking to you.";
-      }
+       else {
+      document.body.classList.add("no-mode");
+    
+      document.getElementById("response").innerHTML =
+        "Alright. Fair enough 🙂<br/>Thanks for being honest.<br/>I still really enjoy talking to you.";
+    }
+
+      
     }
 
     /* Confetti effect (lightweight, no libraries) */
